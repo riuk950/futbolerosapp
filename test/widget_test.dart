@@ -7,6 +7,6 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     // Verify that our app starts with the expected text.
-    expect(find.text('Sogamoso Athletic System'), findsOneWidget);
+    expect(find.text('SOGAMOSO\nATHLETIC SYSTEM'), findsOneWidget);
   });
 }
