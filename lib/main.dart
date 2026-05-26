@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'config/theme/app_theme.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,10 +16,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Material App Bar')),
-        body: const Center(child: Text('Hello World')),
+      debugShowCheckedModeBanner: false,
+      title: 'Futboleros App',
+      theme: AppTheme.lightTheme,
+      home: const Scaffold(
+        body: Center(
+          child: Text('Futboleros App - Sogamoso Athletic System'),
+        ),
       ),
     );
   }
