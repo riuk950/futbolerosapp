@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "project_name": "futbolerosapp",
+  "project_type": "flutter",
+  "platforms": [
+    "android",
+    "shared"
+  ],
+  "build_systems": [
+    "gradle"
+  ],
+  "ui": [],
+  "di": [],
+  "network": [],
+  "persistence": [],
+  "serialization": [],
+  "testing": [],
+  "integrations": [],
+  "ci_cd": [
+    "github_actions"
+  ],
+  "detected_files": {
+    "android_manifest": "android/app/src/debug/AndroidManifest.xml",
+    "pubspec_yaml": "pubspec.yaml"
+  },
+  "warnings": [],
+  "created_at": "2026-07-23T19:47:21Z",
+  "updated_at": "2026-07-23T19:47:21Z"
+}

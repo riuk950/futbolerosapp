@@ -37,6 +37,20 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    flavorDimensions += "default"
+
+    // 2. Define your flavors
+    productFlavors {
+        create("dev") {
+            dimension = "default"
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "Futboleros Dev")
+        }
+        create("prod") {
+            dimension = "default"
+            resValue("string", "app_name", "Futboleros")
+        }
+    }
 }
 
 flutter {
