@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-23T19:47:44.958104Z",
+  "root": "/Users/diego/FlutterProjects/futbolerosapp",
+  "files": [
+    {
+      "path": "android/app/src/main/kotlin/com/abt/futboleros/futbolerosapp/MainActivity.kt",
+      "language": "kotlin",
+      "lines": 5,
+      "imports": [
+        "io.flutter.embedding.android.FlutterActivity"
+      ],
+      "symbols": [
+        {
+          "name": "MainActivity",
+          "kind": "class",
+          "line": 5
+        }
+      ]
+    }
+  ]
+}
