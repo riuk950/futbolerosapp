@@ -1,23 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futbolerosapp/config/providers/auth_providers.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorMessage = 'Debes completar correo y contraseña.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await ref
+          .read(loginUseCaseProvider)
+          .execute(email: email, password: password);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inicio de sesión correcto')),
+      );
+      context.go('/');
+    } catch (error, stackTrace) {
+      debugPrint('Login error: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = error.toString().replaceFirst('Exception: ', '');
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(_errorMessage ?? 'No fue posible iniciar sesión')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -31,16 +85,15 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Main Content
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 32.0),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 448),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Logo & Brand Header
                         Container(
                           width: 64,
                           height: 64,
@@ -85,19 +138,17 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 32),
-
-                        // Card Container
                         Container(
                           padding: const EdgeInsets.all(25.0),
                           decoration: BoxDecoration(
                             color: colorScheme.surfaceContainerLowest,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: colorScheme.outlineVariant, width: 1),
+                            border: Border.all(
+                                color: colorScheme.outlineVariant, width: 1),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Heading 1 & Description
                               Text(
                                 'Bienvenido de\nnuevo',
                                 style: GoogleFonts.inter(
@@ -119,9 +170,6 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-
-                              // Form
-                              // Email Field
                               Text(
                                 'Correo Electrónico',
                                 style: GoogleFonts.inter(
@@ -139,7 +187,8 @@ class _LoginPageState extends State<LoginPage> {
                                   hintStyle: GoogleFonts.inter(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
-                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                    color: colorScheme.onSurfaceVariant
+                                        .withValues(alpha: 0.6),
                                   ),
                                   filled: true,
                                   fillColor: colorScheme.surfaceContainerLow,
@@ -149,19 +198,20 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                                    borderSide: BorderSide(
+                                        color: colorScheme.outlineVariant),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+                                    borderSide: BorderSide(
+                                        color: colorScheme.primary, width: 1.5),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 16),
-
-                              // Password Field Header Row
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Contraseña',
@@ -193,7 +243,8 @@ class _LoginPageState extends State<LoginPage> {
                                   hintStyle: GoogleFonts.inter(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
-                                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                    color: colorScheme.onSurfaceVariant
+                                        .withValues(alpha: 0.6),
                                   ),
                                   filled: true,
                                   fillColor: colorScheme.surfaceContainerLow,
@@ -206,7 +257,8 @@ class _LoginPageState extends State<LoginPage> {
                                       _obscurePassword
                                           ? Icons.visibility_off_outlined
                                           : Icons.visibility_outlined,
-                                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                                      color: colorScheme.onSurfaceVariant
+                                          .withValues(alpha: 0.6),
                                       size: 20,
                                     ),
                                     onPressed: () {
@@ -217,22 +269,33 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                                    borderSide: BorderSide(
+                                        color: colorScheme.outlineVariant),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+                                    borderSide: BorderSide(
+                                        color: colorScheme.primary, width: 1.5),
                                   ),
                                 ),
                               ),
+                              if (_errorMessage != null) ...[
+                                const SizedBox(height: 12),
+                                Text(
+                                  _errorMessage!,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: colorScheme.error,
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 24),
-
-                              // Iniciar Sesión Button
                               SizedBox(
                                 width: double.infinity,
                                 height: 48,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: _isLoading ? null : _handleLogin,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: colorScheme.primary,
                                     foregroundColor: colorScheme.onPrimary,
@@ -241,26 +304,34 @@ class _LoginPageState extends State<LoginPage> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: Text(
-                                    'Iniciar Sesión',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.16,
-                                    ),
-                                  ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        )
+                                      : Text(
+                                          'Iniciar Sesión',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: -0.16,
+                                          ),
+                                        ),
                                 ),
                               ),
                               const SizedBox(height: 24),
-
-                              // Divider
                               Row(
                                 children: [
                                   Expanded(
-                                    child: Divider(color: colorScheme.outlineVariant, thickness: 1),
+                                    child: Divider(
+                                        color: colorScheme.outlineVariant,
+                                        thickness: 1),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
                                     child: Text(
                                       'O CONTINUAR CON',
                                       style: GoogleFonts.inter(
@@ -272,21 +343,23 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Divider(color: colorScheme.outlineVariant, thickness: 1),
+                                    child: Divider(
+                                        color: colorScheme.outlineVariant,
+                                        thickness: 1),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 24),
-
-                              // Google Auth Button
                               SizedBox(
                                 width: double.infinity,
                                 height: 48,
                                 child: OutlinedButton(
                                   onPressed: () {},
                                   style: OutlinedButton.styleFrom(
-                                    backgroundColor: colorScheme.surfaceContainerLowest,
-                                    side: BorderSide(color: colorScheme.outlineVariant),
+                                    backgroundColor:
+                                        colorScheme.surfaceContainerLowest,
+                                    side: BorderSide(
+                                        color: colorScheme.outlineVariant),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -309,8 +382,6 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               const SizedBox(height: 24),
-
-                              // Footer Link
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -340,8 +411,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 32),
-
-                        // App Store Badges
                         Opacity(
                           opacity: 0.4,
                           child: Row(
@@ -349,7 +418,8 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.apple, size: 18, color: colorScheme.onSurface),
+                                  Icon(Icons.apple,
+                                      size: 18, color: colorScheme.onSurface),
                                   const SizedBox(width: 4),
                                   Text(
                                     'iOS App',
@@ -364,7 +434,8 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(width: 24),
                               Row(
                                 children: [
-                                  Icon(Icons.android, size: 18, color: colorScheme.onSurface),
+                                  Icon(Icons.android,
+                                      size: 18, color: colorScheme.onSurface),
                                   const SizedBox(width: 4),
                                   Text(
                                     'Android App',
@@ -385,14 +456,15 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
-              // Simple Footer
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: colorScheme.outlineVariant, width: 1)),
+                  border: Border(
+                      top: BorderSide(
+                          color: colorScheme.outlineVariant, width: 1)),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 child: Column(
                   children: [
                     Text(
@@ -481,7 +553,8 @@ class _GoogleGLogoPainter extends CustomPainter {
       ..color = const Color(0xFFEA4335)
       ..style = PaintingStyle.fill;
 
-    final rect = Rect.fromCircle(center: Offset(center, center), radius: radius);
+    final rect =
+        Rect.fromCircle(center: Offset(center, center), radius: radius);
 
     canvas.drawArc(rect, -0.4, 1.9, true, paintBlue);
     canvas.drawArc(rect, 1.5, 1.3, true, paintGreen);
@@ -491,7 +564,8 @@ class _GoogleGLogoPainter extends CustomPainter {
     final innerPaint = Paint()..color = Colors.white;
     canvas.drawCircle(Offset(center, center), radius * 0.55, innerPaint);
 
-    final barRect = Rect.fromLTRB(center, center - (radius * 0.22), center + radius, center + (radius * 0.22));
+    final barRect = Rect.fromLTRB(center, center - (radius * 0.22),
+        center + radius, center + (radius * 0.22));
     canvas.drawRect(barRect, paintBlue);
   }
 

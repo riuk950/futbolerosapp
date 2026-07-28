@@ -30,9 +30,8 @@ String _$matchGatewayHash() => r'cc71cd4b8455fa70927307c8e94c2b37b9198526';
 final matchGatewayProvider = Provider<MatchGateway>.internal(
   matchGateway,
   name: r'matchGatewayProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$matchGatewayHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$matchGatewayHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
