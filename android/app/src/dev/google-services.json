@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "301590901553",
+    "project_id": "app-futboleros",
+    "storage_bucket": "app-futboleros.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301590901553:android:194f14a42767d3afcaf610",
+        "android_client_info": {
+          "package_name": "com.abt.futboleros.futbolerosapp.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4MVlyeE1LWhjk0OFVd5YHuBCOrNwxEc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
