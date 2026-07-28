@@ -83,8 +83,14 @@ jobs:
           touch .env.prod
 
       # 1. Compilar APK según el Flavor activo
-      - name: Compilar APK 🔨
-        run: flutter build apk --flavor ${{ env.FLAVOR }} --target lib/main.dart
+      - name: Construir aplicación 🚀
+        run: |
+          if [ "${{ env.FLAVOR }}" = "prod" ]; then
+            flutter build apk --flavor prod --release --target=lib/env/main.prod.dart
+          else
+            flutter build apk --flavor dev --release --target=lib/env/main.dev.dart
+          fi
+        working-directory: .
 
       # 2. Asignar App ID dinámicamente según el entorno
       - name: Configurar App ID de Firebase
@@ -100,7 +106,7 @@ jobs:
       - name: Distribuir APK a Firebase 🚀
         uses: w9jds/firebase-action@v13.4.0
         with:
-          args: >
+          args: >0
             appdistribution:distribute build/app/outputs/flutter-apk/app-${{ env.FLAVOR }}-release.apk
             --app "${{ env.APP_ID }}"
             --groups "testers-internos"
