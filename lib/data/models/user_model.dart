@@ -1,5 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import '../../domain/models/User.dart';
+import '../../domain/models/user.dart';
 
 /// Modelo de datos de usuario que extiende la entidad User
 class UserModel extends User {
