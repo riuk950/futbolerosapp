@@ -107,7 +107,8 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
         run: |
-          echo "GCP_SA_KEY=$(echo "$FIREBASE_SERVICE_ACCOUNT_KEY" | base64 | tr -d '\n')" >> "$GITHUB_ENV"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_KEY" > /tmp/gcp-service-account.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-service-account.json" >> "$GITHUB_ENV"
 
       - name: Distribuir APK a Firebase 🚀
         uses: w9jds/firebase-action@v13.4.0
